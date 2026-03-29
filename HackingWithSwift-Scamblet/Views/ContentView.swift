@@ -64,6 +64,9 @@ struct ContentView: View {
                     .disabled(currentWord.contains(letter))
                 }
             }
+            
+            Button("Submit", action: submit)
+                .disabled(currentWord.count < 3)
         }
         .padding()
         .onAppear(perform: load)
@@ -108,6 +111,18 @@ struct ContentView: View {
                 currentWord.remove(at: index)
             }
         }
+    }
+    
+    func submit() {
+        let spelled = currentWord.map(\.text).joined()
+        
+        guard foundWords.contains(spelled) == false else { return }
+        
+        if spellableWords.contains(spelled) {
+            foundWords.insert(spelled)
+        }
+        
+        currentWord.removeAll()
     }
 }
 
