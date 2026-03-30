@@ -25,7 +25,7 @@ struct ContentView: View {
                 ForEach(spellableWords, id: \.self) { word in
                     Text(
                         // Displays the word if it's already found.
-                        foundWords.contains(word) ? word.uppercased() : String(repeating: "•", count: word.count)
+                        foundWords.contains(word) ? word.uppercased() : String(repeating: "*", count: word.count)
                     )
                     .font(.title3)
                 }
@@ -91,6 +91,7 @@ struct ContentView: View {
         ].randomElement()!
         
         spellableWords = dictionary.spellableWords(from: targetWord)
+        spellableWords = rotate(items: spellableWords, columns: 3)
         
         letters = targetWord.shuffled().map {
             Letter(text: String($0))
@@ -123,6 +124,23 @@ struct ContentView: View {
         }
         
         currentWord.removeAll()
+    }
+    
+//     reorganises the order of the array so it flows through the grid in columns instead of rows.
+    func rotate(items: [String], columns: Int) -> [String] {
+        let rows = (items.count + columns - 1) / columns
+        var result = [String]()
+        
+        for row in 0..<rows {
+            for col in 0..<columns {
+                let index = col * rows + row
+                if index < items.count {
+                    result.append(items[index])
+                }
+            }
+        }
+        
+        return result
     }
 }
 
