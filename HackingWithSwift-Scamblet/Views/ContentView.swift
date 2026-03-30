@@ -16,11 +16,17 @@ struct ContentView: View {
     @State private var letters = [Letter]() // all the available letters that can be selected to spell the word.
     @State private var currentWord = [Letter]() // all the letters the user has used in the spelled word.
     
+    @State private var currentProgress = 0.0
+    @State private var totalProgress = 1.0
+    
     // creates a column [GridItem] which contains 3 columns.
     let columns = Array(repeating: GridItem(.flexible(minimum: 100, maximum: 150), spacing: 0), count: 3)
     
     var body: some View {
         VStack(spacing: 20) {
+            ProgressView("Level Progress", value: currentProgress, total: totalProgress)
+                .tint(currentProgress / totalProgress > 0.8 ? .green : nil)
+            
             LazyVGrid(columns: columns) {
                 ForEach(spellableWords, id: \.self) { word in
                     Text(
@@ -71,7 +77,11 @@ struct ContentView: View {
                 
                 Button("Submit", action: submit)
                     .disabled(currentWord.count < 3)
-            }
+                
+                }
+            
+            Button("Next Level", action: load)
+                .disabled(currentProgress / totalProgress < 0.8)
             
         }
         .padding()
@@ -102,6 +112,12 @@ struct ContentView: View {
         letters = targetWord.shuffled().map {
             Letter(text: String($0))
         }
+        
+        totalProgress = Double(spellableWords.map(\.count).reduce(0, +)) //total number of letters that can be matched to make all the words possible.
+        
+        //complete reset
+        currentProgress = 0.0
+        foundWords.removeAll()
     }
     
     // adds letters from the currentWord.
@@ -127,6 +143,7 @@ struct ContentView: View {
         
         if spellableWords.contains(spelled) {
             foundWords.insert(spelled)
+            currentProgress += Double(spelled.count)
         }
         
         currentWord.removeAll()
