@@ -28,6 +28,7 @@ struct ContentView: View {
                         foundWords.contains(word) ? word.uppercased() : String(repeating: "*", count: word.count)
                     )
                     .font(.title3)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             
