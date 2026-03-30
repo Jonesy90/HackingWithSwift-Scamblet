@@ -66,8 +66,13 @@ struct ContentView: View {
                 }
             }
             
-            Button("Submit", action: submit)
-                .disabled(currentWord.count < 3)
+            HStack(spacing: 50) {
+                Button("Shuffle", action: shuffle)
+                
+                Button("Submit", action: submit)
+                    .disabled(currentWord.count < 3)
+            }
+            
         }
         .padding()
         .onAppear(perform: load)
@@ -142,6 +147,12 @@ struct ContentView: View {
         }
         
         return result
+    }
+    
+    func shuffle() {
+        withAnimation {
+            letters.shuffle()
+        }
     }
 }
 
